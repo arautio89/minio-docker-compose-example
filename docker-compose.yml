@@ -1,0 +1,55 @@
+version: '3.7'
+
+services:
+
+  downloader:
+    container_name: downloader
+    depends_on:
+      - minio
+    build:
+      context: ./downloader/
+      dockerfile: Dockerfile
+    restart: on-failure
+    working_dir: /bin/downloader
+    tty: true
+    volumes:
+      - ./downloader:/bin/downloader
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MINIO_ACCESS_KEY=access_key
+      - MINIO_SECRET_KEY=secret_key
+      - MINIO_ENDPOINT=minio:9000
+      - DATA_PREFIX=my_data/
+      - BUCKET_NAME=my-bucket
+      - FILENAME=my_file.txt
+
+  uploader:
+    container_name: uploader
+    depends_on:
+      - minio
+    build:
+      context: ./uploader/
+      dockerfile: Dockerfile
+    restart: on-failure
+    working_dir: /bin/uploader
+    tty: true
+    volumes:
+      - ./uploader:/bin/uploader
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MINIO_ACCESS_KEY=access_key
+      - MINIO_SECRET_KEY=secret_key
+      - MINIO_ENDPOINT=minio:9000
+      - DATA_PREFIX=my_data/
+      - BUCKET_NAME=my-bucket
+      - FILENAME=my_file.txt
+
+  minio:
+    image: minio/minio:RELEASE.2021-01-08T21-18-21Z
+    container_name: my_minio
+    expose:
+      - "9000"
+    environment:
+      - MINIO_ACCESS_KEY=access_key
+      - MINIO_SECRET_KEY=secret_key
+    command: server my_minio/export
