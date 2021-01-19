@@ -8,7 +8,7 @@ ACCESS_KEY = os.environ['MINIO_ACCESS_KEY']
 SECRET_KEY = os.environ['MINIO_SECRET_KEY']
 DATA_PREFIX = os.environ['DATA_PREFIX']
 BUCKET_NAME = os.environ['BUCKET_NAME'] #'my_bucket'
-FILENAME = 'my_file.txt'
+FILENAME = os.environ['FILENAME']
 
 def upload():
     # create a connection to server
